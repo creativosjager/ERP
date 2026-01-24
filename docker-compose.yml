@@ -1,0 +1,15 @@
+﻿services:
+  db:
+    image: postgres:16
+    container_name: jager_core_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: jager
+      POSTGRES_PASSWORD: jager123
+      POSTGRES_DB: jager_core
+    volumes:
+      - jager_core_pg:/var/lib/postgresql/data
+
+volumes:
+  jager_core_pg:

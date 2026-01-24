@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  TALLER
+  REPORTES
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(TALLER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Part {
+  id         String   @id @default(cuid())
+  sku        String   @unique
+  name       String
+  category   String?  // NUEVO
+  stock      Int      @default(0)
+  minStock   Int      @default(0)
+  costCOP    Int?
+  priceCOP   Int?
+  visibleWeb Boolean  @default(true) // NUEVO
+  active     Boolean  @default(true) // NUEVO
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model InventoryImportLog {
+  id        String   @id @default(cuid())
+  filename  String
+  sheetName String
+  created   Int
+  updated   Int
+  skipped   Int
+  errors    Json?
+  createdAt DateTime @default(now())
+}
