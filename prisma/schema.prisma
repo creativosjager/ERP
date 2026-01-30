@@ -7,44 +7,105 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
+enum Role {
   ADMIN
   TALLER
   REPORTES
 }
 
+enum WorkOrderType {
+  GARANTIA
+  COBRO
+}
+
+enum WorkOrderStatus {
+  RECIBIDA
+  DIAGNOSTICO
+  EN_REPARACION
+  LISTA
+  ENTREGADA
+}
+
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         UserRole @default(TALLER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      Role     @default(TALLER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  fullName  String
+  phone     String
+  email     String?
+  city      String?
+  address   String?
+  docId     String?
+  notes     String?
+  scooters  Scooter[]
+  workOrders WorkOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+  @@index([fullName])
+}
+
+model Scooter {
+  id         String   @id @default(cuid())
+  model      String
+  serial     String?  @unique
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  workOrders WorkOrder[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
 }
 
 model Part {
-  id         String   @id @default(cuid())
-  sku        String   @unique
-  name       String
-  category   String?  // NUEVO
-  stock      Int      @default(0)
-  minStock   Int      @default(0)
-  costCOP    Int?
-  priceCOP   Int?
-  visibleWeb Boolean  @default(true) // NUEVO
-  active     Boolean  @default(true) // NUEVO
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  sku       String   @unique
+  name      String
+  category  String?
+  stock     Int      @default(0)
+  minStock  Int      @default(0)
+  costCOP   Float?
+  priceCOP  Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
 }
 
-model InventoryImportLog {
-  id        String   @id @default(cuid())
-  filename  String
-  sheetName String
-  created   Int
-  updated   Int
-  skipped   Int
-  errors    Json?
-  createdAt DateTime @default(now())
+model WorkOrder {
+  id         String          @id @default(cuid())
+  code       String          @unique
+  type       WorkOrderType   @default(COBRO)
+  status     WorkOrderStatus @default(RECIBIDA)
+
+  customerId String
+  customer   Customer        @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  scooterId  String?
+  scooter    Scooter?        @relation(fields: [scooterId], references: [id], onDelete: SetNull)
+
+  issue      String?
+  diagnosis  String?
+  notes      String?
+
+  laborCOP   Float?
+  totalCOP   Float?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([customerId])
+  @@index([scooterId])
+  @@index([status])
 }
