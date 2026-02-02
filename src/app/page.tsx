@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-﻿import Kpicard from "@/components/core/KpiCard";
+﻿﻿import Kpicard from "@/components/core/KpiCard";
 import { metrics } from "@/lib/metrics";
 import { BarChart3, Calendar1, ChartColumn, Clock, Package, User, Wrench } from "lucide-react";
 import QuickAccessCard from "@/components/core/QuickAccessCard";
@@ -149,19 +148,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-=======
-﻿export default function PublicHome() {
-  return (
-    <main className="flex min-h-screen items-center justify-center">
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-semibold">JAGER CORE</h1>
-        <p className="text-muted-foreground">
-          Intranet operativa
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Autenticacion requerida
-        </p>
->>>>>>> c7f2200b2a8b31c04a5f5f55e2c995a5c35c8808
       </div>
     </main>
   );
