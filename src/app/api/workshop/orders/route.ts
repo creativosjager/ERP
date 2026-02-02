@@ -99,6 +99,7 @@ export async function POST(req: Request) {
       },
     });
 
+
     return json(created, 201);
   } catch (e: any) {
     return json({ error: "Error creando OT", detail: e?.message }, 500);
